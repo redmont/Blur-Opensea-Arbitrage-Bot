@@ -1,6 +1,22 @@
 # NFT MEV :robot:
 
-...to extract it, starting with ar₿$.
+This is a complex NFT MEV Bot that operates b/w Blur.io, Opensea and SudoSwap DEX.
+Here are few sucessful test arbitrages: https://etherscan.io/address/0x00000e8c78e461678e455b1f6878bb0ce50ce587
+
+Note: I also had to built my own custom Opensea Order API because opensea does not give full sell tx info if you are not the NFT owner in their official API. There are few other restrictions, therefore i built several custom REST APIs.
+https://github.com/redmont/Opensea-unofficial-API
+
+This bot has following parts
+1. subSalesBlur - Subscribe to blur.io new sales events + update/insert into DB
+2. subBidsOs - Subscribes to opensea new bids + update/insert into DB
+3. getSalesBlur and getBidsOs fetches and store all historical data into MongoDB
+4. Bot.js
+   - Listens to all db i/o events through mongo replication across AWS EC2 servers
+   - Detect potential arbitrages
+   - fetches buy/sell tx data by calling custom built opensea & blur.io API
+   - Prepare the 5 parts tx, bundle the tx, calculate total gas cost.
+   - Run a simulation via flashbots and other simulators.
+   - If the tx is still profitable, sent the tx to private relays to prevent frontrun.
 
 ## To-do :clipboard:
 
